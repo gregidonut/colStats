@@ -55,7 +55,8 @@ func csv2Float(r io.Reader, column int) ([]float64, error) {
 		// checking number of columns in CSV file
 		// if file doesn't have the column number specified
 		if len(row) <= column {
-			fmt.Errorf("%w: file has only %d columns", ErrInvalidColumn, len(row))
+			return nil,
+				fmt.Errorf("%w: file has only %d columns", ErrInvalidColumn, len(row))
 		}
 		// try to convert data into a float
 		v, err := strconv.ParseFloat(row[column], 64)
