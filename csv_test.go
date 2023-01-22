@@ -1,8 +1,12 @@
 package main
 
 import (
+	"bytes"
+	"errors"
 	"fmt"
+	"io"
 	"testing"
+	"testing/iotest"
 )
 
 func TestOperations(t *testing.T) {
@@ -43,5 +47,84 @@ func TestOperations(t *testing.T) {
 				}
 			})
 		}
+	}
+}
+
+func TestCSVFloat(t *testing.T) {
+	csvData := `IP Address,Requests,Response Time
+192.168.0.199,2056,236
+192.168.0.88,899,220
+192.168.0.199,3054,226
+192.168.0.100,4133,218
+192.168.0.199,950,238
+`
+	tests := []struct {
+		name    string
+		col     int
+		want    []float64
+		wantErr error
+		r       io.Reader
+	}{
+		{
+			name:    "Column2",
+			col:     2,
+			want:    []float64{2056, 899, 3054, 4133, 950},
+			wantErr: nil,
+			r:       bytes.NewBufferString(csvData),
+		},
+		{
+			name:    "Column3",
+			col:     3,
+			want:    []float64{236, 220, 226, 218, 238},
+			wantErr: nil,
+			r:       bytes.NewBufferString(csvData),
+		},
+		{
+			name:    "FailRead",
+			col:     1,
+			want:    nil,
+			wantErr: iotest.ErrTimeout,
+			r:       iotest.TimeoutReader(bytes.NewReader([]byte{0})),
+		},
+		{
+			name:    "FailedNotNumber",
+			col:     1,
+			want:    nil,
+			wantErr: ErrNotNumber,
+			r:       bytes.NewBufferString(csvData),
+		},
+		{
+			name:    "FailedInvalidColumn",
+			col:     4,
+			want:    nil,
+			wantErr: ErrInvalidColumn,
+			r:       bytes.NewBufferString(csvData),
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got, err := csv2Float(tt.r, tt.col)
+			if tt.wantErr != nil {
+				if err == nil {
+					t.Errorf("want error, but didn't get oone")
+				}
+				if !errors.Is(err, tt.wantErr) {
+					t.Errorf("want error %q, got %q", tt.wantErr, err)
+				}
+				return
+			}
+			if err != nil {
+				t.Errorf("unexpected error: %q", err)
+			}
+			// this loop has the same idea from TestOperations() where it maps the
+			// index of the float in tt.want to the index of the []float that was parsed
+			// from the mock csv string(i.e. input:[]float to output:float
+			for i, want := range tt.want {
+				if got[i] != want {
+					t.Errorf("want %g, got %g", want, got[i])
+				}
+			}
+		})
 	}
 }
