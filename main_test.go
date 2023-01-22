@@ -2,6 +2,7 @@ package main
 
 import (
 	"bytes"
+	"errors"
 	"os"
 	"testing"
 )
@@ -98,7 +99,7 @@ func Test_run(t *testing.T) {
 				if err == nil {
 					t.Error("wanted error but didn't get one")
 				}
-				if err != tt.wantErr {
+				if !errors.Is(err, tt.wantErr) {
 					t.Errorf("run() error = %q, wantErr %q", err, tt.wantErr)
 				}
 				return
