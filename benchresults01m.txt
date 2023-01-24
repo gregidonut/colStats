@@ -1,7 +1,0 @@
-goos: linux
-goarch: amd64
-pkg: github.com/gregidonut/colStats
-cpu: Intel(R) Core(TM) i5-8300H CPU @ 2.30GHz
-BenchmarkRun-8   	      10	 390032787 ns/op	214886884 B/op	 2527037 allocs/op
-PASS
-ok  	github.com/gregidonut/colStats	4.288s
