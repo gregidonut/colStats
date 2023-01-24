@@ -32,22 +32,25 @@ func csv2Float(r io.Reader, column int) ([]float64, error) {
 	// Create the CSV Reader used to read in data from CSV files
 	cr := csv.NewReader(r)
 
+	// reusing same slice for each read operation, instead of creating a new slice?
+	cr.ReuseRecord = true
+
 	// Adjusting for 0 based index, the program assumes the users
 	// will input columns starting from 1, as it's more natural to understand
 	column--
 
-	// read in all CSV data
-	allData, err := cr.ReadAll()
-	if err != nil {
-		// Wrapping error with %w verb to decorate error with
-		// additional information
-		return nil, fmt.Errorf("cannot read data from file: %w", err)
-	}
-
 	// convert data from csv into a slice of floats to perform calculations on
 	data := make([]float64, 0)
 	// looping through all records
-	for i, row := range allData {
+	for i := 0; true; i++ {
+		row, err := cr.Read()
+		if err == io.EOF {
+			break
+		}
+		if err != nil {
+			return nil, fmt.Errorf("cannot read data from file: %w", err)
+		}
+
 		// ignoring first record since this would be the column headers
 		if i == 0 {
 			continue
