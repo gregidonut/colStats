@@ -1,3 +1,4 @@
 testdata/benchmark
 *.test
 *.pprof
+*.out
