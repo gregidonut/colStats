@@ -19,6 +19,20 @@ func avg(data []float64) float64 {
 	return sum(data) / float64(len(data))
 }
 
+func max(data []float64) float64 {
+	// first elem in slice is assumed to be the largest initially
+	currentLargest := data[0]
+
+	// start loop from second elem since first element is already default
+	// value for sentry variable
+	for _, num := range data[1:] {
+		if num > currentLargest {
+			currentLargest = num
+		}
+	}
+	return currentLargest
+}
+
 // statsFunc is an auxiliary type using the same signature
 // as the above sum() and avg() this will prove useful when
 // this type is used as an input parameter on a calling

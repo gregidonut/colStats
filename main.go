@@ -47,6 +47,8 @@ func run(fileNames []string, cfg config, out io.Writer) error {
 		opFunc = sum
 	case "avg":
 		opFunc = avg
+	case "max":
+		opFunc = max
 	default:
 		return fmt.Errorf("%w: %s", ErrInvalidOperation, cfg.op)
 	}
