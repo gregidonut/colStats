@@ -49,6 +49,8 @@ func run(fileNames []string, cfg config, out io.Writer) error {
 		opFunc = avg
 	case "max":
 		opFunc = max
+	case "min":
+		opFunc = min
 	default:
 		return fmt.Errorf("%w: %s", ErrInvalidOperation, cfg.op)
 	}
