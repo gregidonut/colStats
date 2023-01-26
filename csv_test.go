@@ -36,6 +36,11 @@ func TestOperations(t *testing.T) {
 			op:   max,
 			want: []float64{100, 12.287, -10, 129},
 		},
+		{
+			name: "Min",
+			op:   min,
+			want: []float64{10, 2.2, -20, 37},
+		},
 	}
 
 	// for each test case and for each float in the
